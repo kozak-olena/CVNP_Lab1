@@ -20,16 +20,25 @@ public class Main {
         }
     }
 
+
     public static int readUserInput() {
         displayOptions();
         Scanner in = new Scanner(System.in);
-        String input = in.nextLine();
-        int result;
-        while (!"1".equals(input) || (!"2".equals(input)) || (!"4".equals(input))) {
-            displayOptions();
-            input = in.nextLine();
+        while (true) {
+            String input = in.nextLine();
+            if (!tryParseInt(input)) {
+                System.out.println("Input is not correct: input should be int");
+                displayOptions();
+                continue;
+            }
+            int inputAsInt = Integer.parseInt(input);
+            if (inputAsInt == 1 || inputAsInt == 2 || inputAsInt == 4) {
+                return inputAsInt;
+            } else {
+                System.out.println("Input is not correct: input should be 1, 2 or 4");
+                displayOptions();
+            }
         }
-        return result = Integer.parseInt(input);
     }
 
 
@@ -47,13 +56,15 @@ public class Main {
                     if (input == 4) {
                         break;
                     }
-                    socketClient = SocketClient.CreateSocketForClient(IPAdressOfServer);
+                    socketClient = SocketClient.createSocketForClient(IPAdressOfServer);
                     SocketClient.sendReceive(socketClient, input);
 
                 }
             } finally {
-                socketClient.close();
-                System.out.println("client is closed");
+                if (socketClient != null) {
+                    socketClient.close();
+                    System.out.println("client is closed");
+                }
             }
         } catch (IOException ex) {
             ex.printStackTrace();

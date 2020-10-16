@@ -9,7 +9,6 @@ public class Main {
         try {
             ServerSocket server = SocketServer.createServerSocket();
             SocketServer.sendReceive(server);
-
         } catch (IOException exception) {
             exception.printStackTrace();
         }
