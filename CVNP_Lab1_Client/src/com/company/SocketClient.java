@@ -8,38 +8,40 @@ public class SocketClient {
 
     public static Socket CreateSocketForClient(String IPAdressOfServer) throws IOException {
         Socket clientSocket = new Socket("127.0.0.1", port);
+        if (clientSocket.isConnected()) {
+            System.out.println("Connected to server");
+        }
         return clientSocket;
     }
 
-    public static void Receive(Socket clientSocket) {
+    public static void sendReceive(Socket clientSocket, Integer input) throws IOException {
+        BufferedReader reader = null;
+        BufferedWriter writer = null;
         try {
-            InputStreamReader streamReader = new InputStreamReader(clientSocket.getInputStream());
-            BufferedReader reader = new BufferedReader(streamReader);
-            String inputData = reader.readLine();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            try {
+                InputStreamReader streamReader = new InputStreamReader(clientSocket.getInputStream());
+                OutputStreamWriter streamWriter = new OutputStreamWriter(clientSocket.getOutputStream());
+                writer = new BufferedWriter(streamWriter);
+                reader = new BufferedReader(streamReader);
+
+                String dataToSend = input.toString();
+                writer.write(dataToSend + "\n");   //send
+                writer.flush();
+                streamWriter.flush();
+
+                String serverMassage = reader.readLine();
+                System.out.println("number of my brigade: " + serverMassage);
+
+            } finally {
+                reader.close();
+                writer.close();
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    }
 
-    public static String DataToSend(int input) {
-        String dataToSend = null;
-        if (input == 1) {
-            dataToSend = "get my brigade's number";
-        } else if (input == 2) {
-            dataToSend = "get surnames of my brigade";
-        } else if (input == 3) {
-            dataToSend = "get surnames by brigade's ID";
-
-        } else{
-
-        }
-
-            return dataToSend;
-    }
-
-    public static void Send(Socket clientSocket) throws IOException {
-        OutputStreamWriter streamWriter = new OutputStreamWriter(clientSocket.getOutputStream());
-        BufferedWriter writer = new BufferedWriter(streamWriter);
     }
 
 }
